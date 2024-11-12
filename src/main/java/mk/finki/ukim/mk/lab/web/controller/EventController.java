@@ -64,6 +64,30 @@ public class EventController {
         return "redirect:/events?error=invalid-event-or-location";
     }
 
+    @PostMapping("/edit/{id}")
+    public String editEvent(@PathVariable Long id,
+                            @RequestParam String name,
+                            @RequestParam String description,
+                            @RequestParam Double popularityScore,
+                            @RequestParam Long locationId) {
+        Optional<Event> optionalEvent = this.eventService.findById(id);
+        Optional<Location> optionalLocation = this.locationService.findById(locationId);
+
+        if (optionalEvent.isPresent() && optionalLocation.isPresent()) {
+            Event event = optionalEvent.get();
+            Location location = optionalLocation.get();
+
+            event.setName(name);
+            event.setDescription(description);
+            event.setPopularityScore(popularityScore);
+            event.setLocation(location);
+
+            this.eventService.save(event.getName(), event.getDescription(), event.getPopularityScore(), location.getId());
+            return "redirect:/events";
+        }
+        return "redirect:/events?error=invalid-event-or-location";
+    }
+
     @PostMapping("/delete/{id}")
     public String deleteEvent(@PathVariable Long id){
         this.eventService.deleteById(id);

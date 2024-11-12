@@ -34,10 +34,13 @@ public class EventRepository {
     }
 
     public Optional<Event> save(String name, String description, Double popularityScore, Location location) {
-        Event product = new Event(name, description, popularityScore, location);
-        DataHolder.events.removeIf(p -> p.getName().equals(product.getName()));
-        DataHolder.events.add(product);
-        return Optional.of(product);
+        if (location == null) {
+            throw new IllegalArgumentException("Location cannot be null");
+        }
+        Event event = new Event(name, description, popularityScore, location);
+        DataHolder.events.removeIf(r -> r.getName().equals(name));
+        DataHolder.events.add(event);
+        return Optional.of(event);
     }
 
     public void deleteById(Long id) {
