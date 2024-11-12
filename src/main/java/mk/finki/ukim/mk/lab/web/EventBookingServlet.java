@@ -26,7 +26,7 @@ public class EventBookingServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String eventName = req.getParameter("eventName");
         String attendeeName = "Filip Lichovski";
         String attendeeAddress = req.getRemoteAddr();

@@ -37,9 +37,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Optional<Event> save(String name, String description, Double popularityScore, Long locationId) {
+    public Optional<Event> save(Long id, String name, String description, Double popularityScore, Long locationId) {
         Location location = this.locationRepository.findById(locationId).orElse(null);
-        return this.eventRepository.save(name, description, popularityScore, location);
+        return this.eventRepository.save(id, name, description, popularityScore, location);
     }
 
     @Override

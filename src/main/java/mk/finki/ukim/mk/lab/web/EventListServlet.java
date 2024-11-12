@@ -1,6 +1,5 @@
 package mk.finki.ukim.mk.lab.web;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +27,8 @@ public class EventListServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Event> eventList = eventService.listAll();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<Event> eventList;
         if(req.getParameter("searchText") != null){
             eventList = eventService.searchEvents(req.getParameter("searchText"));
         } else {

@@ -11,7 +11,7 @@ public class Event {
     private Double popularityScore;
     private Location location;
 
-    public Event(String name, String description, Double popularityScore, Location location) {
+    public Event(Long id, String name, String description, Double popularityScore, Location location) {
         this.id = (long) (Math.random() * 1000);
         this.name = name;
         this.description = description;

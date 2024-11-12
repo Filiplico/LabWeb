@@ -23,16 +23,16 @@ public class DataHolder {
         locations.add(new Location("Location_5", "Address_5", "500", "Description_5"));
 
         events = new ArrayList<>();
-        events.add(new Event("Event_1", "Description_1", 3.1, locations.get(0)));
-        events.add(new Event("Event_2", "Description_2", 7.2, locations.get(1)));
-        events.add(new Event("Event_3", "Description_3", 2.3, locations.get(2)));
-        events.add(new Event("Event_4", "Description_4", 1.4, locations.get(3)));
-        events.add(new Event("Event_5", "Description_5", 9.5, locations.get(4)));
-        events.add(new Event("Event_6", "Description_6", 1.6, locations.get(0)));
-        events.add(new Event("Event_7", "Description_7", 4.7, locations.get(1)));
-        events.add(new Event("Event_8", "Description_8", 3.8, locations.get(2)));
-        events.add(new Event("Event_9", "Description_9", 6.9, locations.get(3)));
-        events.add(new Event("Event_10", "Description_10", 7.10, locations.get(4)));
+        events.add(new Event(1L,"Event_1", "Description_1", 3.1, locations.get(0)));
+        events.add(new Event(2L,"Event_2", "Description_2", 7.2, locations.get(1)));
+        events.add(new Event(3L,"Event_3", "Description_3", 2.3, locations.get(2)));
+        events.add(new Event(4L,"Event_4", "Description_4", 1.4, locations.get(3)));
+        events.add(new Event(5L,"Event_5", "Description_5", 9.5, locations.get(4)));
+        events.add(new Event(6L,"Event_6", "Description_6", 1.6, locations.get(0)));
+        events.add(new Event(7L,"Event_7", "Description_7", 4.7, locations.get(1)));
+        events.add(new Event(8L,"Event_8", "Description_8", 3.8, locations.get(2)));
+        events.add(new Event(9L,"Event_9", "Description_9", 6.9, locations.get(3)));
+        events.add(new Event(10L,"Event_10", "Description_10", 7.10, locations.get(4)));
 
     }
 }

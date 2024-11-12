@@ -33,15 +33,29 @@ public class EventRepository {
                 .findFirst();
     }
 
-    public Optional<Event> save(String name, String description, Double popularityScore, Location location) {
-        if (location == null) {
-            throw new IllegalArgumentException("Location cannot be null");
+    public Optional<Event> save(Long id, String name, String description, Double popularityScore, Location location) {
+        Event event;
+
+        Optional<Event> existingEvent = findById(id);
+
+        if (existingEvent.isPresent()) {
+            event = existingEvent.get();
+            event.setName(name);
+            event.setDescription(description);
+            event.setPopularityScore(popularityScore);
+            event.setLocation(location);
+        } else {
+            Long newId = DataHolder.events.stream()
+                    .mapToLong(Event::getId)
+                    .max()
+                    .orElse(0L) + 1;
+            event = new Event(newId, name, description, popularityScore, location);
+            DataHolder.events.add(event);
         }
-        Event event = new Event(name, description, popularityScore, location);
-        DataHolder.events.removeIf(r -> r.getName().equals(name));
-        DataHolder.events.add(event);
+
         return Optional.of(event);
     }
+
 
     public void deleteById(Long id) {
         DataHolder.events.removeIf(i -> i.getId().equals(id));
