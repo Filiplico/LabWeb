@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+</head>
+<body>
+<header>
+    <h1 style="text-align: center;">Event Details</h1>
+</header>
+<main style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+    <!-- Event Details Table -->
+    <table style="border: 1px solid black; border-collapse: collapse;">
+        <tr>
+            <th style="text-align: left; padding: 8px; border: 1px solid black;">Event Name</th>
+            <td style="padding: 8px; border: 1px solid black;" th:text="${event.name}">Event Name</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border: 1px solid black;">Description</th>
+            <td style="padding: 8px; border: 1px solid black;" th:text="${event.description}">Event Description</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border: 1px solid black;">Popularity Score</th>
+            <td style="padding: 8px; border: 1px solid black;" th:text="${event.popularityScore}">Score</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border: 1px solid black;">Location</th>
+            <td style="padding: 8px; border: 1px solid black;" th:text="${event.location.name}">Location Name</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border: 1px solid black;">Location Address</th>
+            <td style="padding: 8px; border: 1px solid black;" th:text="${event.location.address}">Location Address</td>
+        </tr>
+    </table>
+
+    <!-- Back to Events Button -->
+    <div style="margin-top: 20px;">
+        <a href="/events">
+            <button type="button">Back to Events</button>
+        </a>
+    </div>
+</main>
+</body>
+</html>

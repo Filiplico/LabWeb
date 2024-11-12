@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Bookings</title>
+    <style>
+        body { width: 800px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>All Event Bookings</h1>
+</header>
+<main>
+
+    <form method="GET" th:action="@{/allBookings}">
+        <label for="searchName">Search by Event Name:</label>
+        <input type="text" id="searchName" name="searchName" th:value="${searchName}" placeholder="Enter event name">
+        <button type="submit">Search</button>
+    </form>
+    <br/>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Attendee Name</th>
+            <th>Event Name</th>
+            <th>Client IP</th>
+            <th>Number of Tickets</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.attendeeName}">Attendee Name</td>
+            <td th:text="${booking.eventName}">Event Name</td>
+            <td th:text="${booking.attendeeAddress}">Client IP</td>
+            <td th:text="${booking.numberOfTickets}">0</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Button to return to Event List -->
+    <br/>
+    <a th:href="@{/events}">
+        <button type="button">Back to Event List</button>
+    </a>
+
+</main>
+</body>
+</html>
