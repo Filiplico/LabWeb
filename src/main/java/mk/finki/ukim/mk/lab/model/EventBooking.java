@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class EventBooking {
+
     private String eventName;
     private String attendeeName;
     private String attendeeAddress;

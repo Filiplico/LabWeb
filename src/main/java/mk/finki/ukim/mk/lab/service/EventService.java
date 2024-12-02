@@ -7,8 +7,16 @@ import java.util.Optional;
 
 public interface EventService {
     List<Event> listAll();
-    List<Event> searchEvents(String text);
+
+    List<Event> searchEvents(String text, double min);
+
     Optional<Event> findById(Long id);
-    Optional<Event> save(Long id, String name, String description, Double popularityScore, Long locationId);
+
+    Optional<Event> findByName(String name);
+
+    void save(Long id, String name, String description, double popularityScore, Long locationId);
+
     void deleteById(Long id);
+
+    List<Event> findByLocationId(Long locationId);
 }

@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface LocationService {
     List<Location> findAll();
+
+    Location findById(Long id);
 }

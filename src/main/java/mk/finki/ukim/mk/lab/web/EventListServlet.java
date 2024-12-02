@@ -28,15 +28,20 @@ public class EventListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Event> eventList;
-        if(req.getParameter("searchText") != null){
-            eventList = eventService.searchEvents(req.getParameter("searchText"));
-        } else {
-            eventList = eventService.listAll();
-        }
         IWebExchange iWebExchange = JakartaServletWebApplication
                 .buildApplication(getServletContext())
                 .buildExchange(req, resp);
+
+        String searchText = req.getParameter("searchText");
+        String min = req.getParameter("min");
+        Double _minRating = (min != null && !min.isEmpty()) ? Double.valueOf(min) : null;
+
+        List<Event> eventList;
+        if ((searchText != null && !searchText.isEmpty()) || _minRating != null) {
+            eventList = eventService.searchEvents(searchText, 0);
+        } else {
+            eventList = eventService.listAll();
+        }
         WebContext context = new WebContext(iWebExchange);
         context.setVariable("events", eventList);
         springTemplateEngine.process("listEvents.html", context, resp.getWriter());

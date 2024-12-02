@@ -3,9 +3,8 @@ package mk.finki.ukim.mk.lab.service.impl;
 import mk.finki.ukim.mk.lab.model.Event;
 import mk.finki.ukim.mk.lab.model.Location;
 import mk.finki.ukim.mk.lab.repository.EventRepository;
-
-import mk.finki.ukim.mk.lab.repository.LocationRepository;
 import mk.finki.ukim.mk.lab.service.EventService;
+import mk.finki.ukim.mk.lab.service.LocationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +13,11 @@ import java.util.Optional;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
-    public EventServiceImpl(EventRepository eventRepository, LocationRepository locationRepository) {
+    public EventServiceImpl(EventRepository eventRepository, LocationService locationService) {
         this.eventRepository = eventRepository;
-        this.locationRepository = locationRepository;
+        this.locationService = locationService;
     }
 
     @Override
@@ -27,23 +26,56 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> searchEvents(String text) {
-        return eventRepository.searchEvents(text);
-    }
-
-    @Override
-    public Optional<Event> findById(Long id){
+    public Optional<Event> findById(Long id) {
         return eventRepository.findById(id);
     }
 
     @Override
-    public Optional<Event> save(Long id, String name, String description, Double popularityScore, Long locationId) {
-        Location location = this.locationRepository.findById(locationId).orElse(null);
-        return this.eventRepository.save(id, name, description, popularityScore, location);
+    public void save(Long id, String name, String description, double popularityScore, Long locationId) {
+        // Find the location by ID
+        Location location = locationService.findById(locationId);
+        if (location == null) {
+            throw new IllegalArgumentException("Location with ID " + locationId + " not found");
+        }
+
+        // Check if the event already exists and update it, otherwise create a new event
+        Event event;
+        if (id != null && eventRepository.existsById(id)) {
+            // If the event exists, update it
+            event = eventRepository.findById(id).get();
+            event.setName(name);
+            event.setDescription(description);
+            event.setPopularityScore(popularityScore);
+            event.setLocation(location);
+        } else {
+            // If the event doesn't exist, create a new one
+            event = new Event(name, description, popularityScore, location);
+        }
+
+        // Save the event (either newly created or updated)
+        eventRepository.save(event);
     }
 
     @Override
     public void deleteById(Long id) {
-        this.eventRepository.deleteById(id);
+        eventRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Event> findByLocationId(Long locationId) {
+        return eventRepository.findAllByLocation_Id(locationId);
+    }
+
+    @Override
+    public Optional<Event> findByName(String name) {
+        return eventRepository.findByName(name);
+    }
+
+    @Override
+    public List<Event> searchEvents(String text, double min) {
+        return eventRepository.findAll().stream()
+                .filter(event -> event.getName().contains(text) || event.getDescription().contains(text))
+                .filter(event -> event.getPopularityScore() >= min)
+                .toList();
     }
 }

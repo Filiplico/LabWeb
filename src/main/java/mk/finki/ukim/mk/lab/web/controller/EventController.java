@@ -4,7 +4,6 @@ import mk.finki.ukim.mk.lab.model.Event;
 import mk.finki.ukim.mk.lab.model.Location;
 import mk.finki.ukim.mk.lab.service.EventService;
 import mk.finki.ukim.mk.lab.service.LocationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,69 +14,99 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/events")
 public class EventController {
-
     private final EventService eventService;
     private final LocationService locationService;
 
-    @Autowired
     public EventController(EventService eventService, LocationService locationService) {
         this.eventService = eventService;
         this.locationService = locationService;
     }
 
-    @GetMapping()
-    public String getProductPage(@RequestParam(required = false) String error, Model model) {
-        if (error != null && !error.isEmpty()) {
-            model.addAttribute("hasError", true);
-            model.addAttribute("error", error);
+    // GET: List Events
+    @GetMapping
+    public String getEventsPage(@RequestParam(required = false) Long locationId, Model model) {
+        List<Location> locations = this.locationService.findAll();
+
+        List<Event> events;
+        if (locationId != null && locationId > 0) {
+            events = this.eventService.findByLocationId(locationId);
+        } else {
+            events = this.eventService.listAll();
         }
-        List<Event> events = this.eventService.listAll();
+
+        model.addAttribute("locations", locations);
         model.addAttribute("events", events);
+
         return "listEvents";
     }
 
+    // GET: Add Event Form
     @GetMapping("/add-form")
-    public String getAddEventForm(Model model){
+    public String getAddEventForm(Model model) {
         List<Location> locations = this.locationService.findAll();
         model.addAttribute("locations", locations);
         return "add-event";
     }
 
+    // POST: Add Event
     @PostMapping("/add")
-    public String saveEvent(@RequestParam(required = false) Long id,
-                            @RequestParam String name,
+    public String saveEvent(@RequestParam String name,
                             @RequestParam String description,
-                            @RequestParam Double popularityScore,
+                            @RequestParam double popularityScore,
                             @RequestParam Long locationId) {
-        this.eventService.save(id, name, description, popularityScore, locationId);
-        return "redirect:/events";
+        try {
+            this.eventService.save(null, name, description, popularityScore, locationId);  // ID is null for new events
+            return "redirect:/events";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/events/add-form?error=" + e.getMessage();
+        }
     }
 
+    // GET: Edit Event Form
     @GetMapping("/edit-form/{id}")
-    public String editEventForm(@PathVariable Long id, Model model){
-        if(this.eventService.findById(id).isPresent()){
-            Event event = this.eventService.findById(id).get();
+    public String getEditEventForm(@PathVariable Long id, Model model) {
+        Optional<Event> optionalEvent = this.eventService.findById(id);
+        if (optionalEvent.isPresent()) {
+            Event event = optionalEvent.get();
             List<Location> locations = this.locationService.findAll();
             model.addAttribute("locations", locations);
             model.addAttribute("event", event);
-            return "add-event";
-        }
-        return "redirect:/events?error=invalid-event-or-location";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteEvent(@PathVariable Long id){
-        this.eventService.deleteById(id);
-        return "redirect:/events";
-    }
-
-    @GetMapping("/details/{id}")
-    public String getEventDetails(@PathVariable Long id, Model model) {
-        Optional<Event> optionalEvent = this.eventService.findById(id);
-        if (optionalEvent.isPresent()) {
-            model.addAttribute("event", optionalEvent.get());
-            return "event-details";
+            return "add-event";  // Show the form pre-filled with the event details
         }
         return "redirect:/events?error=Event not found";
+    }
+
+    // POST: Edit Event
+    @PostMapping("/edit/{id}")
+    public String editEvent(@PathVariable Long id,
+                            @RequestParam String name,
+                            @RequestParam String description,
+                            @RequestParam double popularityScore,
+                            @RequestParam Long locationId) {
+        try {
+            Optional<Event> optionalEvent = this.eventService.findById(id);
+            Location location = this.locationService.findById(locationId);
+
+            if (optionalEvent.isPresent() && location != null) {
+                Event event = optionalEvent.get();
+                event.setName(name);
+                event.setDescription(description);
+                event.setPopularityScore(popularityScore);
+                event.setLocation(location);
+
+                this.eventService.save(id, event.getName(), event.getDescription(), event.getPopularityScore(), location.getId());
+                return "redirect:/events";
+            }
+            return "redirect:/events?error=Invalid event or location";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/events?error=" + e.getMessage();
+        }
+    }
+
+    // POST: Delete Event
+    @PostMapping("/delete/{id}")
+    public String deleteEvent(@PathVariable Long id) {
+        this.eventService.deleteById(id);
+        return "redirect:/events";
     }
 }
