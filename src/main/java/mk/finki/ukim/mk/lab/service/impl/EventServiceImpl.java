@@ -32,29 +32,27 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void save(Long id, String name, String description, double popularityScore, Long locationId) {
-        // Find the location by ID
         Location location = locationService.findById(locationId);
         if (location == null) {
             throw new IllegalArgumentException("Location with ID " + locationId + " not found");
         }
 
-        // Check if the event already exists and update it, otherwise create a new event
         Event event;
-        if (id != null && eventRepository.existsById(id)) {
-            // If the event exists, update it
-            event = eventRepository.findById(id).get();
-            event.setName(name);
-            event.setDescription(description);
-            event.setPopularityScore(popularityScore);
-            event.setLocation(location);
+
+        if (id != null) {
+            event = eventRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Event with ID " + id + " not found"));
         } else {
-            // If the event doesn't exist, create a new one
-            event = new Event(name, description, popularityScore, location);
+            event = new Event();
         }
 
-        // Save the event (either newly created or updated)
+        event.setName(name);
+        event.setDescription(description);
+        event.setPopularityScore(popularityScore);
+        event.setLocation(location);
+
         eventRepository.save(event);
     }
+
 
     @Override
     public void deleteById(Long id) {

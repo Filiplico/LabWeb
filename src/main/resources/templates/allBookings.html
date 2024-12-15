@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <title>All Bookings</title>
     <style>
-        body { width: 800px; margin: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        body {
+            width: 800px;
+            margin: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -15,6 +25,7 @@
 </header>
 <main>
 
+    <!-- Search by Event Name -->
     <form method="GET" th:action="@{/allBookings}">
         <label for="searchName">Search by Event Name:</label>
         <input type="text" id="searchName" name="searchName" th:value="${searchName}" placeholder="Enter event name">
@@ -22,6 +33,7 @@
     </form>
     <br/>
 
+    <!-- Bookings Table -->
     <table>
         <thead>
         <tr>
@@ -37,6 +49,10 @@
             <td th:text="${booking.eventName}">Event Name</td>
             <td th:text="${booking.attendeeAddress}">Client IP</td>
             <td th:text="${booking.numberOfTickets}">0</td>
+        </tr>
+        <!-- Display message if no bookings are found -->
+        <tr th:if="${#lists.isEmpty(bookings)}">
+            <td colspan="4" style="text-align: center;">No bookings found.</td>
         </tr>
         </tbody>
     </table>
