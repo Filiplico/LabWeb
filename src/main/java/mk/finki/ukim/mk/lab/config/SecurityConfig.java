@@ -8,32 +8,44 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
 @Configuration
 public class SecurityConfig {
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public InMemoryUserDetailsManager userDetailsManager() {
         return new InMemoryUserDetailsManager(
                 User.withUsername("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build()
         );
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/events/add-form", "/events/edit-form/**", "/events/delete/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        .requestMatchers("/events/add-form", "/events/edit-form/**", "/events/delete/**")
+                        .hasRole("ADMIN") // Only admins can access these URLs
+                        .requestMatchers("/servlet/**", "/events", "/eventBooking")
+                        .permitAll()
+                        .anyRequest()
+                        .permitAll()
                 )
+
                 .formLogin(form -> form
                         .defaultSuccessUrl("/events", true)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/events")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 );
+
         return http.build();
     }
 }

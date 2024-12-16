@@ -30,7 +30,20 @@
 <body>
 <header>
     <h1>Welcome to the Event Booking App</h1>
+
+    <div sec:authorize="isAnonymous()">
+        <a th:href="@{/login}">
+            <button type="button" class="btn btn-success">Login</button>
+        </a>
+    </div>
+
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
 </header>
+
 <main>
 
     <!-- Display error messages -->
@@ -52,7 +65,7 @@
 
     <!-- Event Selection and Display Table -->
     <h2>Choose an Event:</h2>
-    <form method="POST" th:action="@{/eventBooking}">
+    <form method="POST" action="/eventBooking">
         <div class="table-responsive">
             <table>
                 <thead>
@@ -113,6 +126,7 @@
             <button type="button" class="btn btn-dark">Add New Event</button>
         </a>
     </div>
+
     <!-- View All Bookings Button Section -->
     <a th:href="@{/allBookings}">
         <button type="button" class="btn btn-secondary">View All Bookings</button>

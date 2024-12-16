@@ -28,22 +28,21 @@ public class EventBookingController {
         return request.getRemoteAddr();
     }
 
-    // POST Event booked
     @PostMapping("/eventBooking")
     public String bookEvent(@RequestParam Long eventId,
                             @RequestParam int numTickets,
                             HttpServletRequest request,
+                            HttpSession session,
                             Model model) {
         String clientIp = getClientIpAddress(request);
 
         Optional<Event> event = eventService.findById(eventId);
 
         if (event.isPresent()) {
-            // Add attributes to model if needed
-            model.addAttribute("eventName", event.get().getName());
-            model.addAttribute("numTickets", numTickets);
-            model.addAttribute("attendeeName", "Petko Petkov");
-            model.addAttribute("attendeeAddress", clientIp);
+            session.setAttribute("eventName", event.get().getName());
+            session.setAttribute("numTickets", numTickets);
+            session.setAttribute("attendeeName", "Petko Petkov");
+            session.setAttribute("attendeeAddress", clientIp);
             return "redirect:/bookingConfirmation";
         } else {
             model.addAttribute("error", "Event not found for ID: " + eventId);
@@ -51,7 +50,6 @@ public class EventBookingController {
         }
     }
 
-    // GET for the booking confirmation page
     @GetMapping("/bookingConfirmation")
     public String showBookingConfirmation(HttpSession session, Model model) {
         String eventName = (String) session.getAttribute("eventName");
@@ -61,7 +59,7 @@ public class EventBookingController {
 
         if (eventName == null || numTickets == null || attendeeName == null || attendeeAddress == null) {
             model.addAttribute("error", "Booking information not found.");
-            return "listEvents";  // Redirect to another page if session is empty
+            return "listEvents";
         }
 
         model.addAttribute("eventName", eventName);
@@ -69,6 +67,6 @@ public class EventBookingController {
         model.addAttribute("attendeeName", attendeeName);
         model.addAttribute("attendeeAddress", attendeeAddress);
 
-        return "bookingConfirmation";  // This should correspond to bookingConfirmation.html
+        return "bookingConfirmation";
     }
 }

@@ -14,7 +14,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "bookingListServlet", urlPatterns = "/allBookings")
+@WebServlet(name = "bookingListServlet", urlPatterns = "/servlet/allBookings")
 public class BookingListServlet extends HttpServlet {
 
     private final EventBookingRepository bookingRepository;
